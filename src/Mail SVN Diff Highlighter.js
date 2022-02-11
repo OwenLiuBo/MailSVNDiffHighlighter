@@ -12,6 +12,7 @@
 // @match           https://mail.kasoftware.cn/*
 // @match           https://qiye.aliyun.com/alimail/*
 // @match           https://work.aliyun.com/alimail/*
+// @match           https://outlook.office.com/*
 // ==/UserScript==
 
 //
@@ -38,6 +39,9 @@ function highlightDiff(){
   var gmail = true;
   if (!nodes || nodes.length <= 0) {
     nodes = getNodesByTagNameAndClass(document.body, "div", "node_plain_body");
+    if (!nodes || nodes.length <= 0) {
+      nodes = getNodesByTagNameAndClass(document.body, "div", "PlainText");
+    }
     gmail = false;
   }
 

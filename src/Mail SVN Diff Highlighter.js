@@ -3,7 +3,7 @@
 // @namespace       http://liubingrui.com/gSVNHighlighter
 // @description     Highlights svn diff
 // @author          Owen Liu
-// @version         0.6.1
+// @version         0.6.3
 // @match           http://mail.google.com/*
 // @match           https://mail.google.com/*
 // @match           http://*.mail.google.com/*
@@ -34,6 +34,18 @@ document.addEventListener(
   true
 );
 
+function odiffSwitch(switcher) {
+  var hlDiv = document.getElementById('odiffHighlight');
+  var oDiv = document.getElementById('odiffOriginal');
+  if(switcher.checked) {
+    hlDiv.style.display = 'block';
+    oDiv.style.display = 'none';
+  } else {
+    hlDiv.style.display = 'none';
+    oDiv.style.display = 'block';
+  }
+}
+
 function highlightDiff(){
   var nodes = getNodesByTagNameAndClass(document.body, "div", "ii gt");
   var gmail = true;
@@ -41,6 +53,9 @@ function highlightDiff(){
     nodes = getNodesByTagNameAndClass(document.body, "div", "node_plain_body");
     if (!nodes || nodes.length <= 0) {
       nodes = getNodesByTagNameAndClass(document.body, "div", "PlainText");
+    }
+    if (!nodes || nodes.length <=0) {
+      nodes = document.querySelectorAll('[data-testid="mail-body-plain-text-renderer"]');
     }
     gmail = false;
   }
@@ -273,7 +288,7 @@ function formatDiff(diff, original) {
     var file = diff.files[i];
     html += "<h3 class='odiff-filepath'>" + file.name + "</h3>"
     html += "<div class='odiff-filediv'><table cellpadding='0' cellspacing='0' class='odiff-file'><col width='30'><col width='*'><col width='30'>";
-    html += "<thead><tr class='odiff-filerev'><th></th><th>" + file.oldRev + "</th><th></th><th>" + file.newRev + "</th></tr></thead>";
+    html += "<thead><tr class='odiff-filerev'><th></th><th>r" + file.oldRev + "</th><th></th><th>r" + file.newRev + "</th></tr></thead>";
     for(j=0;j<file.blocks.length;j++){
       var block = file.blocks[j];
       var oln = block.oldLN;
@@ -367,9 +382,12 @@ var css = ".odiff-header{ \
   padding-left: 10px; \
   background-color: #F4F7FB; \
   font-size: 12px; \
+  padding-top: 10px; \
+  margin-bottom: 10px; \
 } \
 .odiff-comments pre { \
   font-size: 11px; \
+  white-space: pre-wrap; \
   font-family: Consolas,monaco,monospace; \
 } \
 .odiff-others{ \
@@ -420,7 +438,6 @@ var css = ".odiff-header{ \
   background-color: #F8F8F8; \
   border: solid 1px #E0E0E0; \
   border-bottom-width: 0px; \
-  height: 18px; \
   padding: 7px; \
   margin: 10px 0px 0px 0px; \
   color: #15478C; \
@@ -471,6 +488,7 @@ var css = ".odiff-header{ \
   font-size: 12px; \
   padding: 5px 0px; \
   color: #15478C; \
+  text-align: center; \
   background-color: #F4F7FB; \
 } \
 .odiff-code-ignore{ \
@@ -543,31 +561,6 @@ if (typeof GM_addStyle != "undefined") {
     heads[0].appendChild(node);
   }
 }
-})();
-
-//
-// Add script
-//
-
-(function() {
-  var js = "function odiffSwitch(switcher) { \
-  var hlDiv = document.getElementById('odiffHighlight'); \
-  var oDiv = document.getElementById('odiffOriginal'); \
-  if(switcher.checked) { \
-    hlDiv.style.display = 'block'; \
-    oDiv.style.display = 'none'; \
-  } else { \
-    hlDiv.style.display = 'none'; \
-    oDiv.style.display = 'block'; \
-  } \
-}";
-  var heads = document.getElementsByTagName("head");
-  if (heads.length > 0) {
-    var node = document.createElement("script");
-    node.type = "application/javascript";
-    node.appendChild(document.createTextNode(js));
-    heads[0].appendChild(node);
-  }
 })();
 
 //
